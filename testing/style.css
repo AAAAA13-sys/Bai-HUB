@@ -52,6 +52,7 @@ body::before {
     0% {
         transform: scale(1) translateY(0);
     }
+
     100% {
         transform: scale(0.95) translateY(-160px);
     }
@@ -181,11 +182,25 @@ body::before {
 }
 
 @keyframes roll {
-    0% { transform: rotate(0deg) translateY(0); }
-    25% { transform: rotate(18deg) translateY(-6px); }
-    50% { transform: rotate(-18deg) translateY(0); }
-    75% { transform: rotate(18deg) translateY(6px); }
-    100% { transform: rotate(0deg) translateY(0); }
+    0% {
+        transform: rotate(0deg) translateY(0);
+    }
+
+    25% {
+        transform: rotate(18deg) translateY(-6px);
+    }
+
+    50% {
+        transform: rotate(-18deg) translateY(0);
+    }
+
+    75% {
+        transform: rotate(18deg) translateY(6px);
+    }
+
+    100% {
+        transform: rotate(0deg) translateY(0);
+    }
 }
 
 /* SLOT MACHINE SECTION - EXACT SAME SIZE AS DICE */
@@ -243,8 +258,15 @@ body::before {
 }
 
 @keyframes slotWin {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 /* Blackjack Section */
@@ -262,7 +284,8 @@ body::before {
     background: rgba(0, 50, 30, 0.4);
 }
 
-.dealer-area, .player-area {
+.dealer-area,
+.player-area {
     text-align: center;
     margin-bottom: 32px;
 }
@@ -283,16 +306,77 @@ body::before {
 }
 
 .game-card {
-    background: white;
-    color: black;
-    padding: 20px 16px;
-    border-radius: 12px;
-    font-size: 2rem;
-    font-weight: bold;
-    min-width: 80px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid #ddd;
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 1.4rem;
+    font-weight: 800;
+    width: 65px;
+    height: 95px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
+    background-image: radial-gradient(circle at top right, #fff, #f4f4f4);
+    animation: cardDeal 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes cardDeal {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.8) rotateX(-20deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+}
+
+.game-card .card-val {
+    align-self: flex-start;
+    line-height: 1;
+}
+
+.game-card .card-suit {
+    font-size: 1.8rem;
+    align-self: flex-end;
+    line-height: 1;
+}
+
+.game-card.suit-red {
+    color: #e63946;
+}
+
+.game-card.suit-black {
+    color: #1d3557;
+}
+
+.cards-area .game-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.cards-area .game-card:nth-child(2) {
+    animation-delay: 0.25s;
+}
+
+.cards-area .game-card:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.cards-area .game-card:nth-child(4) {
+    animation-delay: 0.55s;
+}
+
+.cards-area .game-card:nth-child(5) {
+    animation-delay: 0.7s;
+}
+
+.cards-area .game-card:nth-child(6) {
+    animation-delay: 0.85s;
 }
 
 .card-placeholder {
@@ -746,6 +830,7 @@ body::before {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -757,15 +842,15 @@ body::before {
     .main-layout {
         flex-direction: column;
     }
-    
+
     .left-side {
         flex: 0 0 100%;
     }
-    
+
     .right-side {
         flex: 0 0 100%;
     }
-    
+
     .history-list-container {
         max-height: 300px;
     }
@@ -775,64 +860,64 @@ body::before {
     .bottom-section {
         flex-direction: column;
     }
-    
+
     .pattern-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .number-grid {
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
     .quick-stakes {
         flex-direction: column;
     }
-    
+
     /* Resize all game images for mobile */
     .die,
     .slot-reel {
         width: 70px;
         height: 70px;
     }
-    
+
     .slot-symbol {
         width: 55px;
         height: 55px;
     }
-    
+
     .dice-section .dice-container,
     .slot-machine-display {
         padding: 20px;
         gap: 16px;
     }
-    
+
     .game-card {
         font-size: 1.2rem;
         padding: 12px 8px;
         min-width: 60px;
     }
-    
+
     .payout-row {
         gap: 16px;
         font-size: 0.9rem;
     }
-    
+
     .payout-symbol {
         width: 24px;
         height: 24px;
     }
-    
+
     .game-title {
         font-size: 1.2rem;
     }
-    
+
     .home-btn {
         padding: 6px 12px;
         font-size: 0.8rem;
         top: 10px;
         left: 10px;
     }
-    
+
     .home-btn img {
         width: 14px;
         height: 14px;
@@ -840,31 +925,33 @@ body::before {
 }
 
 @media (max-width: 480px) {
+
     .die,
     .slot-reel {
         width: 55px;
         height: 55px;
     }
-    
+
     .slot-symbol {
         width: 45px;
         height: 45px;
     }
-    
+
     .game-card {
         font-size: 1rem;
         padding: 8px 6px;
         min-width: 50px;
     }
-    
+
     .section-header h2 {
         font-size: 1rem;
     }
-    
+
     .result-value {
         font-size: 0.85rem;
     }
 }
+
 /* Home Button - Icon Only */
 .home-btn {
     display: flex;
@@ -951,8 +1038,15 @@ body::before {
 }
 
 @keyframes slotWin {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 /* Responsive */
@@ -960,10 +1054,12 @@ body::before {
     .slot-reels-container {
         gap: 16px;
     }
+
     .slot-reel {
         width: 70px;
         height: 70px;
     }
+
     .slot-symbol {
         width: 55px;
         height: 55px;
@@ -974,10 +1070,12 @@ body::before {
     .slot-reels-container {
         gap: 12px;
     }
+
     .slot-reel {
         width: 55px;
         height: 55px;
     }
+
     .slot-symbol {
         width: 45px;
         height: 45px;

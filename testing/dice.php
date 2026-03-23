@@ -8,8 +8,8 @@ class Game {
         $this->patterns = [
             'odd' => ['label' => 'Odd', 'points' => 10, 'multiplier' => 2],
             'even' => ['label' => 'Even', 'points' => 10, 'multiplier' => 2],
-            'low' => ['label' => 'Low (2-6)', 'points' => 10, 'multiplier' => 2],
-            'high' => ['label' => 'High (7-12)', 'points' => 10, 'multiplier' => 2],
+            'low' => ['label' => 'Low (3-10)', 'points' => 10, 'multiplier' => 2],
+            'high' => ['label' => 'High (11-18)', 'points' => 10, 'multiplier' => 2],
         ];
     }
     
@@ -24,9 +24,9 @@ class Game {
             case 'even':
                 return $value % 2 === 0;
             case 'low':
-                return $value >= 2 && $value <= 6;
+                return $value >= 3 && $value <= 10;
             case 'high':
-                return $value >= 7 && $value <= 12;
+                return $value >= 11 && $value <= 18;
             default:
                 return false;
         }
@@ -35,10 +35,12 @@ class Game {
     public function rollDice() {
         $die1 = random_int(1, 6);
         $die2 = random_int(1, 6);
+        $die3 = random_int(1, 6);
         return [
             'die1' => $die1,
             'die2' => $die2,
-            'total' => $die1 + $die2
+            'die3' => $die3,
+            'total' => $die1 + $die2 + $die3
         ];
     }
     
@@ -79,7 +81,7 @@ class Game {
             'timestamp' => date('c'),
             'pattern' => $label,
             'bet' => number_format($bet, 2), // Format bet with 2 decimals
-            'dice' => [$dice['die1'], $dice['die2']],
+            'dice' => [$dice['die1'], $dice['die2'], $dice['die3']],
             'generated' => $generated,
             'win' => $win,
             'points' => number_format($points, 2), // Format points with 2 decimals
@@ -184,6 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'display_data' => [
                     'die1' => $diceRoll['die1'],
                     'die2' => $diceRoll['die2'],
+                    'die3' => $diceRoll['die3'],
                     'total' => $diceRoll['total'],
                     'win' => $result['win'],
                     'points' => $result['points'],
@@ -248,6 +251,7 @@ $diceImages = [
 
 $die1 = $displayRoll ? $displayRoll['die1'] : 1;
 $die2 = $displayRoll ? $displayRoll['die2'] : 1;
+$die3 = $displayRoll ? $displayRoll['die3'] : 1;
 $total = $displayRoll ? $displayRoll['total'] : null;
 $win = $displayRoll ? $displayRoll['win'] : null;
 $points = $displayRoll ? $displayRoll['points'] : null;
@@ -266,26 +270,27 @@ $patternDisplay = $displayRoll ? $displayRoll['pattern_display'] : '';
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-    <a href="index.php" class="home-btn">
-        <img src="img/icons/home-button.svg" alt="Home" />
+    <a href="index.php" class="home-btn" title="Home">
+        <img src="img/house.svg" alt="Home" />
     </a>
-    
     <main class="container">
-        <div class="game-header">
-            <h1 class="game-title">🎲 DICE BETTING GAME 🎲</h1>
-            <div class="score">Score: <strong id="scoreValue"><?php echo $score; ?></strong></div>
-        </div>
+        <?php if ($showWelcome && !$displayRoll && !$error): ?>
+            <div class="message message-welcome">
+                Welcome to Dice Betting Game! Place your bet and roll the dice.
+            </div>
+        <?php endif; ?>
 
         <div class="main-layout">
             <div class="left-side">
                 <div class="dice-section">
                     <div class="section-header">
-                        <h2>Dice wheel</h2>
-                        <div class="score">Score: <strong id="scoreValue"><?php echo $score; ?></strong></div>
+                        <h2>Dice Table</h2>
+                        <div class="score">Credits: <strong id="scoreValue"><?php echo $score; ?></strong></div>
                     </div>
                     <div class="dice-container" id="diceContainer">
                         <img id="die1" class="die" src="<?php echo $diceImages[$die1]; ?>" alt="Die" data-final="<?php echo $die1; ?>" />
                         <img id="die2" class="die" src="<?php echo $diceImages[$die2]; ?>" alt="Die" data-final="<?php echo $die2; ?>" />
+                        <img id="die3" class="die" src="<?php echo $diceImages[$die3]; ?>" alt="Die" data-final="<?php echo $die3; ?>" />
                     </div>
                     <div class="result-panel">
                         <div class="result-row">
@@ -330,11 +335,11 @@ $patternDisplay = $displayRoll ? $displayRoll['pattern_display'] : '';
                                     </label>
                                     <label class="bet-option">
                                         <input type="radio" name="betPattern" value="low" class="pattern-radio" <?php echo (!$displayRoll && $betType === 'pattern' && $betValue === 'low') ? 'checked' : ''; ?> />
-                                        <span>Low (2-6)</span>
+                                        <span>Low (3-10)</span>
                                     </label>
                                     <label class="bet-option">
                                         <input type="radio" name="betPattern" value="high" class="pattern-radio" <?php echo (!$displayRoll && $betType === 'pattern' && $betValue === 'high') ? 'checked' : ''; ?> />
-                                        <span>High (7-12)</span>
+                                        <span>High (11-18)</span>
                                     </label>
                                 </div>
                             </div>
@@ -342,7 +347,7 @@ $patternDisplay = $displayRoll ? $displayRoll['pattern_display'] : '';
                             <div class="bet-group">
                                 <div class="group-title">Exact number <span class="multiplier">10x</span></div>
                                 <div class="number-grid">
-                                    <?php for ($i = 2; $i <= 12; $i++): ?>
+                                    <?php for ($i = 3; $i <= 18; $i++): ?>
                                         <button type="button" class="number-btn <?php echo ($displayRoll && $betType === 'number' && $betValue == $i) ? 'active' : ''; ?>" data-number="<?php echo $i; ?>"><?php echo $i; ?></button>
                                     <?php endfor; ?>
                                 </div>
@@ -393,10 +398,10 @@ $patternDisplay = $displayRoll ? $displayRoll['pattern_display'] : '';
                                             <strong><?php echo htmlspecialchars($round['pattern']); ?></strong> x<?php echo $round['bet']; ?>
                                         </div>
                                         <div class="history-result <?php echo $round['win'] ? 'win' : 'lose'; ?>">
-                                            <?php echo $round['win'] ? 'WIN' : 'LOSE'; ?> +<?php echo $round['points']; ?>
+                                            <?php echo $round['win'] ? 'WIN +' . $round['points'] : 'LOSE -' . number_format((float)str_replace(',', '', $round['bet']), 2); ?>
                                         </div>
                                         <div class="history-dice">
-                                            <?php echo $round['dice'][0]; ?> + <?php echo $round['dice'][1]; ?> = <?php echo $round['generated']; ?>
+                                            <?php echo $round['dice'][0]; ?> + <?php echo $round['dice'][1]; ?> + <?php echo $round['dice'][2]; ?> = <?php echo $round['generated']; ?>
                                         </div>
                                     </li>
                                 <?php endforeach; ?>
