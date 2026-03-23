@@ -1,0 +1,97 @@
+Casino Code Challenge
+Teaching PHP Conditional Statements through a Pattern Betting Game
+Team Roles: BA, Frontend, Backend, QA
+
+Activity Objective
+Learn PHP conditionals: if, elseif, else, switch
+Practice pattern recognition
+Simulate real software team workflow
+
+Game Concept
+Player selects a betting pattern
+System generates random result
+PHP conditional logic checks result
+Display WIN or LOSE
+
+Example Patterns
+Odd vs Even
+Lucky 7 (multiples of 7)
+High vs Low
+Dice Sum
+Color Pattern
+
+Team Roles
+Business Analyst
+Frontend Developer
+Backend Developer
+QA Tester
+
+Business Analyst Tasks
+Analyze game requirements
+Define pattern rules
+Document system logic
+Create simple game flow
+
+BA Example Rule
+1–15 = Low
+16–30 = High
+Multiples of 7 = Lucky
+Odd or Even pattern
+
+Backend Developer Tasks
+Generate random number
+Receive user bet
+Implement PHP conditional logic
+Return result message
+
+Backend PHP Logic Example
+if bet = odd and number %2 !=0 → Win
+elseif bet = even and number %2 ==0 → Win
+elseif number %7 ==0 → Jackpot
+else → Lose
+
+Frontend Developer Tasks
+Design input form
+Allow user to choose bet
+Display number and result
+Create simple interface
+
+Frontend Example
+Dropdown options:
+Odd
+Even
+Lucky 7
+High
+Low
+Button: Play Game
+
+QA Tester Tasks
+Create test cases
+Check all conditions
+Report bugs
+Verify correct outputs
+
+Example Test Cases
+Odd + 9 → Win
+Even + 9 → Lose
+Lucky7 + 14 → Jackpot
+High + 20 → Win
+
+Suggested Timeline
+Requirements discussion – 10 min
+Design – 10 min
+Coding – 30 min
+Testing – 15 min
+Team Demo – 10 min
+
+Evaluation Rubric
+Correct PHP Logic – 30
+Working Game – 25
+Interface – 15
+Testing – 15
+Team Collaboration – 15
+
+Reflection Questions
+How did conditional statements control the game?
+What bugs did QA find?
+How did teamwork help solve problems?
