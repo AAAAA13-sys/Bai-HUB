@@ -65,25 +65,181 @@ body::before {
     padding: 24px;
 }
 
+/* ===== HOMEPAGE STYLES ===== */
+.homepage-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hero-section {
+    text-align: center;
+    margin-bottom: 48px;
+    padding: 32px;
+    background: rgba(15, 22, 38, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    backdrop-filter: blur(10px);
+}
+
+.hero-icon {
+    margin-bottom: 20px;
+}
+
+.hero-svg {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 0 10px rgba(74, 196, 125, 0.5));
+}
+
+.game-title {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #4ac47d, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+}
+
+.game-subtitle {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 32px;
+    margin-bottom: 48px;
+}
+
+/* Homepage Game Cards - Renamed to avoid conflict */
+.game-card-display {
+    background: rgba(15, 22, 38, 0.9);
+    border: 1px solid rgba(74, 196, 125, 0.3);
+    border-radius: 24px;
+    padding: 32px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+}
+
+.game-card-display:hover {
+    transform: translateY(-8px);
+    border-color: #4ac47d;
+    box-shadow: 0 20px 40px rgba(74, 196, 125, 0.2);
+}
+
+.game-card-icon {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.card-svg {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    transition: transform 0.3s ease;
+}
+
+.game-card-display:hover .card-svg {
+    transform: scale(1.05);
+}
+
+.game-card-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.game-card-description {
+    color: rgba(255, 255, 255, 0.7);
+    text-align: center;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.game-card-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.feature-tag {
+    background: rgba(74, 196, 125, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: #4ac47d;
+}
+
+.play-btn {
+    background: linear-gradient(135deg, #4ac47d, #3a9d62);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: #000;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: auto;
+}
+
+.play-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(74, 196, 125, 0.4);
+}
+
+.info-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.info-card {
+    background: rgba(15, 22, 38, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.info-card h3 {
+    color: #4ac47d;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+}
+
+.info-card p {
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+}
+
 /* Home Button - Fixed Position */
 .home-btn {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
     background: rgba(74, 196, 125, 0.2);
     border: 1px solid rgba(74, 196, 125, 0.5);
-    padding: 8px 16px;
+    padding: 10px;
     border-radius: 12px;
-    color: #4ac47d;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.9rem;
     transition: all 0.2s;
     position: fixed;
     top: 20px;
     left: 20px;
     z-index: 1000;
     backdrop-filter: blur(10px);
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
 }
 
 .home-btn:hover {
@@ -93,8 +249,9 @@ body::before {
 }
 
 .home-btn img {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
+    display: block;
 }
 
 /* Game Header */
@@ -110,7 +267,7 @@ body::before {
     backdrop-filter: blur(10px);
 }
 
-.game-title {
+.game-header .game-title {
     margin: 0;
     font-size: 1.8rem;
 }
@@ -203,7 +360,7 @@ body::before {
     }
 }
 
-/* SLOT MACHINE SECTION - EXACT SAME SIZE AS DICE */
+/* SLOT MACHINE SECTION */
 .slot-display-section {
     background: rgba(15, 22, 38, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -215,15 +372,16 @@ body::before {
 
 .slot-machine-display {
     padding: 32px;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(30, 20, 10, 0.6));
+    background: rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
 .slot-reels-container {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 24px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .slot-reel {
@@ -247,8 +405,6 @@ body::before {
     width: 80px;
     height: 80px;
     object-fit: contain;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    transition: all 0.3s ease;
 }
 
 .slot-reel.winning {
@@ -305,6 +461,7 @@ body::before {
     margin-bottom: 12px;
 }
 
+/* Blackjack Cards - Different from homepage cards */
 .game-card {
     background: #ffffff;
     color: #1a1a1a;
@@ -907,20 +1064,23 @@ body::before {
         height: 24px;
     }
 
-    .game-title {
+    .game-header .game-title {
         font-size: 1.2rem;
     }
 
-    .home-btn {
-        padding: 6px 12px;
-        font-size: 0.8rem;
-        top: 10px;
-        left: 10px;
+    /* Homepage responsive */
+    .game-title {
+        font-size: 2rem;
     }
 
-    .home-btn img {
-        width: 14px;
-        height: 14px;
+    .games-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-svg,
+    .card-svg {
+        width: 60px;
+        height: 60px;
     }
 }
 
@@ -950,134 +1110,8 @@ body::before {
     .result-value {
         font-size: 0.85rem;
     }
-}
 
-/* Home Button - Icon Only */
-.home-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(74, 196, 125, 0.2);
-    border: 1px solid rgba(74, 196, 125, 0.5);
-    padding: 10px;
-    border-radius: 12px;
-    transition: all 0.2s;
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    width: 40px;
-    height: 40px;
-    text-decoration: none;
-}
-
-.home-btn:hover {
-    background: rgba(74, 196, 125, 0.3);
-    transform: translateY(-2px);
-    border-color: #4ac47d;
-}
-
-.home-btn img {
-    width: 24px;
-    height: 24px;
-    display: block;
-}
-
-/* Slot Machine Display - Matching Dice Layout */
-.slot-display-section {
-    background: rgba(15, 22, 38, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    margin-bottom: 24px;
-}
-
-.slot-machine-display {
-    padding: 32px;
-    background: rgba(0, 0, 0, 0.3);
-    text-align: center;
-}
-
-.slot-reels-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    flex-wrap: nowrap;
-}
-
-.slot-reel {
-    width: 100px;
-    height: 100px;
-    border-radius: 16px;
-    background: rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.slot-reel:hover {
-    transform: translateY(-2px);
-}
-
-.slot-symbol {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-}
-
-.slot-reel.winning {
-    animation: slotWin 0.5s ease-in-out 3;
-    border-color: #4ac47d;
-    box-shadow: 0 0 20px rgba(74, 196, 125, 0.5);
-}
-
-@keyframes slotWin {
-
-    0%,
-    100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.1);
-    }
-}
-
-/* Responsive */
-@media (max-width: 800px) {
-    .slot-reels-container {
-        gap: 16px;
-    }
-
-    .slot-reel {
-        width: 70px;
-        height: 70px;
-    }
-
-    .slot-symbol {
-        width: 55px;
-        height: 55px;
-    }
-}
-
-@media (max-width: 480px) {
     .slot-reels-container {
         gap: 12px;
-    }
-
-    .slot-reel {
-        width: 55px;
-        height: 55px;
-    }
-
-    .slot-symbol {
-        width: 45px;
-        height: 45px;
     }
 }

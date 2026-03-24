@@ -1,0 +1,72 @@
+{
+    "user_69c258cb52342_1089": {
+        "balance": 86.25,
+        "history": [
+            {
+                "bet": 86.25,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "grapes",
+                    "grapes",
+                    "clover"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 115,
+                "win": true,
+                "payout": 172.5,
+                "multiplier": 1.5,
+                "symbols": [
+                    "grapes",
+                    "grapes",
+                    "grapes"
+                ],
+                "message": "WIN! You won 172.50 credits! (1.5x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 10,
+                "win": true,
+                "payout": 15,
+                "multiplier": 1.5,
+                "symbols": [
+                    "orange",
+                    "orange",
+                    "orange"
+                ],
+                "message": "WIN! You won 15.00 credits! (1.5x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 10,
+                "win": true,
+                "payout": 30,
+                "multiplier": 3,
+                "symbols": [
+                    "clover",
+                    "clover",
+                    "clover"
+                ],
+                "message": "WIN! You won 30.00 credits! (3x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 10,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "orange",
+                    "grapes",
+                    "clover"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            }
+        ]
+    }
+}

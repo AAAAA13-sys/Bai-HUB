@@ -1,0 +1,15 @@
+{
+    "user_69c258cb52342_1089": {
+        "balance": 100,
+        "history": [
+            {
+                "bet": 100,
+                "status": "push",
+                "payout": 100,
+                "playerValue": 19,
+                "dealerValue": 19,
+                "message": "Double Down: Push! Your bet is returned. Your bet is returned."
+            }
+        ]
+    }
+}
