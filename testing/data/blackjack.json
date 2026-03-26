@@ -11,5 +11,58 @@
                 "message": "Double Down: Push! Your bet is returned. Your bet is returned."
             }
         ]
+    },
+    "user_69c519faa3d72_3237": {
+        "balance": 1000,
+        "history": [
+            {
+                "bet": 500,
+                "status": "win",
+                "payout": 1000,
+                "playerValue": 20,
+                "dealerValue": 17,
+                "message": "You beat the dealer! You won 1000.00 credits!"
+            },
+            {
+                "bet": 250,
+                "status": "win",
+                "payout": 500,
+                "playerValue": 18,
+                "dealerValue": 22,
+                "message": "Dealer busts! You win! You won 500.00 credits!"
+            },
+            {
+                "bet": 50,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 17,
+                "dealerValue": 18,
+                "message": "Dealer wins. Better luck next time!"
+            },
+            {
+                "bet": 50,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 19,
+                "dealerValue": 21,
+                "message": "Dealer wins. Better luck next time!"
+            },
+            {
+                "bet": 50,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 19,
+                "dealerValue": 21,
+                "message": "Dealer wins. Better luck next time!"
+            },
+            {
+                "bet": 50,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 18,
+                "dealerValue": 20,
+                "message": "Dealer wins. Better luck next time!"
+            }
+        ]
     }
 }

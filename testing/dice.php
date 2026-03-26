@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="dice-script.js" defer></script>
+    <script src="ads.js" defer></script>
 </head>
 <body>
     <a href="index.php" class="home-btn" title="Home">
@@ -17,7 +18,10 @@
             <div class="left-side">
                 <div class="dice-section">
                     <div class="section-header">
-                        <h2>Dice Table</h2>
+                        <div style="display: flex; align-items: center;">
+                            <h2>Dice Table</h2>
+                            <span class="rules-icon" id="rulesIcon" title="How to Play">?</span>
+                        </div>
                         <div class="score">Credits: <strong id="scoreValue">0.00</strong></div>
                     </div>
                     <div class="dice-container" id="diceContainer">
@@ -44,12 +48,11 @@
                 <div class="bottom-section">
                     <div class="betting-settings">
                         <div class="section-header">
-                            <h2>Betting rules & odds</h2>
+                            <h2>Betting Options</h2>
                         </div>
                         <div class="betting-content">
                             <div class="bet-group">
-                                <div class="group-title">Pattern bets <span class="multiplier">2x</span></div>
-                                <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 12px;">Win Probability: Exactly 50%. Truly Random!</div>
+                                <div class="group-title">Pattern bets</div>
                                 <div class="pattern-grid">
                                     <label class="bet-option">
                                         <input type="radio" name="betPattern" value="odd" class="pattern-radio" checked />
@@ -71,8 +74,7 @@
                             </div>
 
                             <div class="bet-group">
-                                <div class="group-title">Exact number <span class="multiplier">10x</span></div>
-                                <div style="font-size: 0.85rem; color: #aaa; margin-bottom: 12px;">Win Probability: Varies by Number.</div>
+                                <div class="group-title">Exact number</div>
                                 <div class="number-grid">
                                     <button type="button" class="number-btn" data-number="3">3</button>
                                     <button type="button" class="number-btn" data-number="4">4</button>

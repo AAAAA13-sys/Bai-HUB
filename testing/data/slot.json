@@ -68,5 +68,140 @@
                 "status": "lose"
             }
         ]
+    },
+    "user_69c519faa3d72_3237": {
+        "balance": 100.625,
+        "history": [
+            {
+                "bet": 40.25,
+                "win": true,
+                "payout": 60.375,
+                "multiplier": 1.5,
+                "symbols": [
+                    "star",
+                    "star",
+                    "orange"
+                ],
+                "message": "WIN! You won 60.38 credits! (1.5x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 40.25,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "clover",
+                    "star",
+                    "grapes"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 40.25,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "clover",
+                    "orange",
+                    "grapes"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 161,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "orange",
+                    "orange",
+                    "grapes"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 10,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "clover",
+                    "orange",
+                    "grapes"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 10,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "clover",
+                    "grapes",
+                    "diamond"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 10,
+                "win": true,
+                "payout": 15,
+                "multiplier": 1.5,
+                "symbols": [
+                    "orange",
+                    "orange",
+                    "star"
+                ],
+                "message": "WIN! You won 15.00 credits! (1.5x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 80,
+                "win": true,
+                "payout": 120,
+                "multiplier": 1.5,
+                "symbols": [
+                    "orange",
+                    "orange",
+                    "orange"
+                ],
+                "message": "WIN! You won 120.00 credits! (1.5x multiplier)",
+                "status": "win"
+            },
+            {
+                "bet": 10,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "grapes",
+                    "orange",
+                    "orange"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            },
+            {
+                "bet": 10,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "orange",
+                    "star",
+                    "grapes"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose"
+            }
+        ]
     }
 }

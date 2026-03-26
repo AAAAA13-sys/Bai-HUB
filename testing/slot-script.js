@@ -32,7 +32,7 @@ function renderState(state) {
 
             const isWin = round.status === 'win';
             const sign = isWin ? '+' : '-';
-            const amount = isWin ? round.payout : round.bet;
+            const amount = isWin ? (parseFloat(round.payout) - parseFloat(round.bet)) : parseFloat(round.bet);
 
             let symbolsHtml = round.symbols.map(s => {
                 let imgPath = '';
@@ -103,6 +103,31 @@ function animateSlotSpin(spinData, stateAfter) {
             }
 
             renderState(stateAfter);
+            
+            // Show winning/losing notification
+            setTimeout(() => {
+                let icon = 'info';
+                let title = 'Result';
+                if (spinData.win) {
+                    icon = 'success';
+                    title = 'WINNER!';
+                } else {
+                    icon = 'error';
+                    title = 'No luck';
+                }
+
+                Swal.fire({
+                    title: title,
+                    text: spinData.win 
+                        ? `Congratulations! You won ${parseFloat(spinData.payout).toFixed(2)} credits!` 
+                        : 'Better luck next time!',
+                    icon: icon,
+                    confirmButtonText: 'Great!',
+                    confirmButtonColor: '#4ac47d',
+                    backdrop: `rgba(0,0,0,0.4)`
+                });
+            }, 300);
+
             placeBtn.disabled = false;
             placeBtn.innerHTML = '🎰 SPIN 🎰';
             isSpinning = false;
@@ -157,5 +182,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await apiRequest('reset');
         renderState(res);
         Swal.fire('Reset', 'Game has been reset to 100 credits.', 'success');
+    });
+
+    document.getElementById('rulesIcon').addEventListener('click', () => {
+        Swal.fire({
+            title: 'Slot Machine Payouts',
+            html: `
+                <div style="text-align: left; line-height: 1.6;">
+                    <p>🎰 <strong>How to Win:</strong> Get 3 matching symbols in a row!</p>
+                    <p>🌟 <strong>Wild Symbol:</strong> The Star symbol is WILD and substitutes for any other symbol.</p>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+                    <p>🍇 <strong>3 Grapes:</strong> 1.5x bet (~1 in 10 spins)</p>
+                    <p>🍊 <strong>3 Oranges:</strong> 1.5x bet (~1 in 10 spins)</p>
+                    <p>🍀 <strong>3 Clovers:</strong> 3x bet (~1 in 25 spins)</p>
+                    <p>💎 <strong>3 Diamonds:</strong> 5x bet (~1 in 150 spins)</p>
+                    <p>🌟 <strong>3 Stars:</strong> 10x bet (~1 in 1000 spins)</p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonText: 'Got it!',
+            confirmButtonColor: '#4ac47d'
+        });
     });
 });

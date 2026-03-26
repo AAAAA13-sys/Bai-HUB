@@ -61,9 +61,14 @@ function renderState(state) {
             const li = document.createElement('li');
             li.className = 'history-item';
 
-            const isWin = round.status === 'win' || round.status === 'push';
-            const sign = isWin ? '+' : '-';
-            const amount = isWin ? round.payout : round.bet;
+            const isWin = round.status === 'win';
+            const isPush = round.status === 'push';
+            const sign = isWin ? '+' : (isPush ? '±' : '-');
+            let amount = 0;
+            
+            if (isWin) amount = parseFloat(round.payout) - parseFloat(round.bet);
+            else if (isPush) amount = 0;
+            else amount = parseFloat(round.bet);
 
             li.innerHTML = `
                 <div class="history-bet">Bet: ${parseFloat(round.bet).toFixed(2)} credits</div>
@@ -95,7 +100,9 @@ function renderState(state) {
         bettingForm.style.display = 'block';
         playingActions.style.display = 'none';
     }
+}
 
+function showResultPopup(gameData) {
     if (gameData && gameData.status) {
         setTimeout(() => {
             let icon = 'info';
@@ -105,11 +112,9 @@ function renderState(state) {
                 title: gameData.status.toUpperCase(),
                 text: gameData.message,
                 icon: icon,
-                timer: 2000,
-                showConfirmButton: false,
+                confirmButtonText: 'Great!',
+                confirmButtonColor: '#4ac47d',
                 backdrop: `rgba(0,0,0,0.4)`
-            }).then(() => {
-                apiRequest('clear_board').then(renderState);
             });
         }, 500);
     }
@@ -126,17 +131,24 @@ document.addEventListener('DOMContentLoaded', () => {
             Swal.fire('Error', res.error, 'error');
         } else {
             renderState(res);
+            if (!res.gameActive) {
+                showResultPopup(res.gameData);
+            }
         }
     });
 
     document.getElementById('hitBtn').addEventListener('click', async () => {
         const res = await apiRequest('hit');
         renderState(res);
+        if (res.gameActive === false) {
+            showResultPopup(res.gameData);
+        }
     });
 
     document.getElementById('standBtn').addEventListener('click', async () => {
         const res = await apiRequest('stand');
         renderState(res);
+        showResultPopup(res.gameData);
     });
 
     document.getElementById('doubleBtn').addEventListener('click', async () => {
@@ -145,6 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Swal.fire('Error', res.error, 'error');
         } else {
             renderState(res);
+            showResultPopup(res.gameData);
         }
     });
 
@@ -161,6 +174,24 @@ document.addEventListener('DOMContentLoaded', () => {
             let val = balance * multiplier;
             if (val < 0.01) val = 0.01;
             document.getElementById('betAmount').value = val.toFixed(2);
+        });
+    });
+
+    document.getElementById('rulesIcon').addEventListener('click', () => {
+        Swal.fire({
+            title: 'Blackjack Rules',
+            html: `
+                <div style="text-align: left; line-height: 1.6;">
+                    <p>🎯 <strong>Objective:</strong> Beat the dealer's hand without going over 21.</p>
+                    <p>💎 <strong>Payout:</strong> Blackjack (21 with first 2 cards) pays <strong>2.5x</strong> your bet.</p>
+                    <p>🃏 <strong>Dealer Rule:</strong> Dealer must stand on <strong>17</strong> or higher.</p>
+                    <p>🔄 <strong>Push:</strong> If you and the dealer have the same total, it's a push and your bet is returned.</p>
+                    <p>⚖️ <strong>Odds:</strong> Win Probability is ~42.22% (House Edge ~0.5%).</p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonText: 'Got it!',
+            confirmButtonColor: '#4ac47d'
         });
     });
 });

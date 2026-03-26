@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="blackjack-script.js" defer></script>
+    <script src="ads.js" defer></script>
 </head>
 <body>
     <a href="index.php" class="home-btn" title="Home">
@@ -17,7 +18,10 @@
             <div class="left-side">
                 <div class="game-display-section">
                     <div class="section-header">
-                        <h2>Blackjack Table</h2>
+                        <div style="display: flex; align-items: center;">
+                            <h2>Blackjack Table</h2>
+                            <span class="rules-icon" id="rulesIcon" title="How to Play">?</span>
+                        </div>
                         <div class="score">Credits: <strong id="scoreValue">0.00</strong></div>
                     </div>
                     <div class="blackjack-table">
@@ -50,24 +54,6 @@
                 </div>
 
                 <div class="bottom-section">
-                    <div class="betting-settings">
-                        <div class="section-header">
-                            <h2>Game Info</h2>
-                        </div>
-                        <div class="betting-content">
-                            <div class="bet-group">
-                                <div class="group-title">How to Play</div>
-                                <div class="rules-list">
-                                    <div class="rule-item">🎯 Beat the dealer to 21</div>
-                                    <div class="rule-item">💎 Blackjack pays 2.5x</div>
-                                    <div class="rule-item">🃏 Dealer must stand on 17</div>
-                                    <div class="rule-item">🔄 Push returns your bet</div>
-                                    <div class="rule-item">⚖️ Win Probability: ~42.22% (House Edge ~0.5%)</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <div class="stakes-actions">
                         <div class="section-header">
                             <h2>Stakes & actions</h2>
@@ -112,6 +98,7 @@
                         </ul>
                     </div>
                 </div>
+            </div>
             </div>
         </div>
     </main>
