@@ -35,7 +35,7 @@ function renderState(state) {
 
             const isWin = round.status === 'win';
             const sign = isWin ? '+' : '-';
-            const amount = isWin ? round.payout : round.bet;
+            const amount = isWin ? (parseFloat(round.payout) - parseFloat(round.bet)) : parseFloat(round.bet);
 
             li.innerHTML = `
                 <div class="history-bet">
@@ -129,6 +129,31 @@ function animateDiceRoll(rollData, stateAfter) {
                 }
 
                 renderState(stateAfter);
+                
+                // Show winning/losing notification
+                setTimeout(() => {
+                    let icon = 'info';
+                    let title = 'Result';
+                    if (rollData.status === 'win') {
+                        icon = 'success';
+                        title = 'WINNER!';
+                    } else {
+                        icon = 'error';
+                        title = 'Try Again';
+                    }
+
+                    Swal.fire({
+                        title: title,
+                        text: rollData.status === 'win' 
+                            ? `Congratulations! You won ${parseFloat(rollData.payout).toFixed(2)} credits!` 
+                            : 'Better luck next time!',
+                        icon: icon,
+                        confirmButtonText: 'Great!',
+                        confirmButtonColor: '#4ac47d',
+                        backdrop: `rgba(0,0,0,0.4)`
+                    });
+                }, 300);
+
                 placeBtn.disabled = false;
                 placeBtn.textContent = 'Roll Dice';
                 isRolling = false;
@@ -212,6 +237,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await apiRequest('reset');
         renderState(res);
         Swal.fire('Reset', 'Game has been reset to 100 credits.', 'success');
+    });
+
+    document.getElementById('rulesIcon').addEventListener('click', () => {
+        Swal.fire({
+            title: 'Dice Game Rules',
+            html: `
+                <div style="text-align: left; line-height: 1.6;">
+                    <p>🎲 <strong>How to Play:</strong> Select a bet type and amount, then roll the dice!</p>
+                    <p>📈 <strong>Pattern Bets (2x Payout):</strong></p>
+                    <ul>
+                        <li><strong>Odd/Even:</strong> Bet on the total sum being odd or even.</li>
+                        <li><strong>Low (3-10):</strong> Bet on the total sum being between 3 and 10.</li>
+                        <li><strong>High (11-18):</strong> Bet on the total sum being between 11 and 18.</li>
+                    </ul>
+                    <p>🎯 <strong>Exact Number (10x Payout):</strong> Bet on the exact sum of the three dice (3-18).</p>
+                    <p>⚖️ <strong>Probabilities:</strong> Pattern bets have a 50% win probability. Exact numbers vary.</p>
+                </div>
+            `,
+            icon: 'info',
+            confirmButtonText: 'Got it!',
+            confirmButtonColor: '#4ac47d'
+        });
     });
 
     updateBetDisplay();

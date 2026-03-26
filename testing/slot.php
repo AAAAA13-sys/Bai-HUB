@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="slot-script.js" defer></script>
+    <script src="ads.js" defer></script>
     <style>
         @keyframes rollDown {
             0% { transform: translateY(-70%); opacity: 0; }
@@ -64,7 +65,10 @@
             <div class="left-side">
                 <div class="slot-display-section">
                     <div class="section-header">
-                        <h2>Slot Reels</h2>
+                        <div style="display: flex; align-items: center;">
+                            <h2>Slot Reels</h2>
+                            <span class="rules-icon" id="rulesIcon" title="Payout Rules">?</span>
+                        </div>
                         <div class="score">Credits: <strong id="scoreValue">0.00</strong></div>
                     </div>
                     <div class="slot-machine-display">
@@ -93,56 +97,6 @@
                 </div>
 
                 <div class="bottom-section">
-                    <div class="betting-settings">
-                        <div class="section-header">
-                            <h2>Payout Rules & Odds</h2>
-                        </div>
-                        <div class="betting-content">
-                            <div class="bet-group">
-                                <div class="group-title">Winning Combinations</div>
-                                <div class="payout-table">
-                                    <div class="payout-row" style="margin-bottom: 8px;">
-                                        <em>All wins require exactly 3 matching symbols.<br>The 🌟 Star symbol is WILD! (e.g., 🍇🌟🌟 = 3 Grapes)</em>
-                                    </div>
-                                    <div class="payout-row">
-                                        <div class="payout-symbols">
-                                            <span>🍇 🍇 🍇 (3 Grapes)</span>
-                                        </div>
-                                        <span class="payout-multiplier" style="font-size: 0.8rem; color:#aaa;">~1 in 10 spins</span>
-                                        <span class="payout-multiplier">1.5x bet</span>
-                                    </div>
-                                    <div class="payout-row">
-                                        <div class="payout-symbols">
-                                            <span>🍊 🍊 🍊 (3 Oranges)</span>
-                                        </div>
-                                        <span class="payout-multiplier" style="font-size: 0.8rem; color:#aaa;">~1 in 10 spins</span>
-                                        <span class="payout-multiplier">1.5x bet</span>
-                                    </div>
-                                    <div class="payout-row">
-                                        <div class="payout-symbols">
-                                            <span>🍀 🍀 🍀 (3 Clovers)</span>
-                                        </div>
-                                        <span class="payout-multiplier" style="font-size: 0.8rem; color:#aaa;">~1 in 25 spins</span>
-                                        <span class="payout-multiplier">3x bet</span>
-                                    </div>
-                                    <div class="payout-row">
-                                        <div class="payout-symbols">
-                                            <span>💎 💎 💎 (3 Diamonds)</span>
-                                        </div>
-                                        <span class="payout-multiplier" style="font-size: 0.8rem; color:#aaa;">~1 in 150 spins</span>
-                                        <span class="payout-multiplier">5x bet</span>
-                                    </div>
-                                    <div class="payout-row">
-                                        <div class="payout-symbols">
-                                            <span>🌟 🌟 🌟 (3 Stars)</span>
-                                        </div>
-                                        <span class="payout-multiplier" style="font-size: 0.8rem; color:#aaa;">~1 in 1000 spins</span>
-                                        <span class="payout-multiplier">10x bet</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="stakes-actions">
                         <div class="section-header">
