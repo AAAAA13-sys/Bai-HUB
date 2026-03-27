@@ -1,42 +1,43 @@
 # Bai-HUB Casino Platform
 
-Bai-HUB is a professional-grade casino gaming platform designed with a premium aesthetic and a robust backend. The platform provides a seamless gambling experience across multiple game types with integrated advertisement and credit management systems.
+Bai-HUB is a premium casino gaming platform featuring a unified global credit system and a dynamic bonus engine. Designed for a high-end gambling experience, it integrates three core games (Blackjack, Dice, and Slots) into a single "Universal Wallet."
 
 ## Key Features
 
-### Game Selection
-- **Dice Betting**: A versatile dice game where players can bet on patterns such as Odd/Even and High/Low (2x payout) or predict the exact sum of three dice for a high-risk, high-reward 10x payout.
-- **Blackjack**: A refined implementation of the classic 21 game against a dealer. It includes standard actions such as Hit, Stand, and Double Down, with a 2.5x payout for a natural Blackjack.
-- **Slot Machine**: A fast-paced matching game with variable multipliers based on symbol rarity, ranging from standard fruit matches (0.8x - 1.2x) to Diamond Jackpots (5x).
+### 🎰 Game Selection
+- **Dice Betting**: Multiple betting patterns (Odd/Even, High/Low) with 2x payouts, or exact sum predictions for a 10x jackpot.
+- **Blackjack**: Professional 21 against the dealer with Hit, Stand, and **Double Down** actions. Features premium card rendering with suit-specific colors (♣♥♦♠).
+- **Slot Machine**: Fast-paced reels with **Wild (Star)** symbols and variable multipliers. Support for "Lucky Reels" with enhanced jackpot weights.
 
-### Advertisement System
-- **Context-Aware Targeting**: The platform features a specialized ad system that displays game-specific advertisements based on the current page, ensuring high relevance.
-- **Persuasive Marketing**: Ad banners utilize a carousel of rotating slogans designed for maximum user engagement and conversion.
-- **Bonus Credit Generation**: Users can claim between 100 and 500 free credits via an interactive captcha system. To ensure platform stability, claims are restricted by a 10-minute global cooldown.
+### 💰 Universal Wallet & Systems
+- **Global Balance**: Credits are shared across all games in real-time. No more per-game credit management.
+- **Lucky 10th Mechanic**: Every **10th bet** platform-wide triggers a "Lucky Shot" with a 50% chance to gain a significant edge (Dice re-roll, Dealer stands on 15, or Richer reels).
+- **Divine Blessing**: A homepage-exclusive bonus system that rescues "Broke" players and rewards "High-Rollers" with 100-300 free credits (15-min cooldown).
+- **Enhanced Security**: Double-confirmation flow on all game resets with automatic redirection to the homepage to prevent accidental balance loss.
 
-### Professional UI/UX
-- **Emoji-Free Design**: The interface is strictly professional, utilizing high-quality icons and a consistent text-based design system to avoid visual clutter.
-- **Cross-Game Persistence**: Credits and game history are maintained across the entire platform, allowing players to move between games without losing their balance.
+### 🛡️ Professional UI/UX
+- **Premium Aesthetics**: Glassmorphism modals, smooth CSS animations, and a curated dark-mode color palette.
+- **Dynamic Ads**: Context-aware promotional banners with rotating slogans and an interactive captcha claim system for extra credits.
 
 ## Technical Architecture
 
-- **Frontend**: Built with semantic HTML5 and vanilla CSS3. Interactive elements and game state management are handled by optimized JavaScript.
-- **Backend / API**: All game logic is processed server-side via PHP for security and consistency.
-- **Storage System**: Utilizes a persistent JSON-based data layer. The system is designed for high portability and includes "self-healing" logic that automatically generates the required directory structure and data files on the first run.
-
-### Directory Structure (within Bai-HUB Final/)
-- `/api/`: PHP API endpoints for game actions and data storage.
-- `/data/`: Persistent storage for user balances, game history, and global metadata.
-- `/scripts/`: Client-side logic for games and the advertisement engine.
-- `/img/`: Visual assets, including icons and game-specific imagery.
+- **Backend / API**: Persistent PHP logic with session-based and cookie-linked and anonymous state tracking.
+- **Unified Storage**: Centralized `global_balance.json` for wait-free balance syncing across different game instances.
+- **Self-Healing Layer**: Automated directory and file creation on first run to ensure 100% uptime and easy deployment.
 
 ## Recent Updates
+
+### Mar 28, 2026
+- **Global Wallet Migration**: Transitioned from per-game JSONs to a unified global storage architecture.
+- **Blessing & Luck Engine**: Implemented the homepage Blessing modal and cross-game "Lucky 10th" bias logic.
+- **Blackjack UI Refinement**: Restored card suit emojis and added red/white color coding for high visual clarity.
+- **Reset Flow Overhaul**: Added a mandatory double-confirmation security step for all system resets.
+- **Slot API Refactor**: Fixed sync issues with history and balance variables during the migration.
 
 ### Mar 27, 2026
 - **Enhanced Platform Stability**: Implemented a "self-healing" JSON storage system that automatically generates the required directory structure and data files if they are missing.
 - **Ad System Overhaul**: Improved ad targeting to be game-specific and added a dynamic carousel of persuasive, high-conversion slogans.
 - **Security & Fair Play**: Added a mandatory 10-minute cooldown on ad credit claims and implemented a bet confirmation step for the Dice game to prevent accidental losses.
-- **Professional UI Cleanup**: System-wide removal of emojis from the game UI and replacement of browser-rendered card suit symbols with professional text-based identifiers.
 - **Asset Migration**: Reorganized the codebase by moving all client-side JavaScript assets into a dedicated `scripts/` directory.
 
 ### Mar 26, 2026
@@ -45,3 +46,6 @@ Bai-HUB is a professional-grade casino gaming platform designed with a premium a
 
 ### Mar 24, 2026
 - **Initial Documentation**: Created the first comprehensive project guide and early-stage core logic updates to the gambling engine.
+
+---
+
