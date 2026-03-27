@@ -20,6 +20,13 @@ async function apiRequest(action, data = {}) {
 function renderState(state) {
     document.getElementById('scoreValue').textContent = parseFloat(state.balance).toFixed(2);
 
+    // Show/Hide reset button: Only show if balance != 100 OR history has entries
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        const isDefault = parseFloat(state.balance) === 100 && (!state.history || state.history.length === 0);
+        resetBtn.style.display = isDefault ? 'none' : 'inline-block';
+    }
+
     const historyList = document.getElementById('historyList');
     historyList.innerHTML = '';
 
@@ -65,7 +72,7 @@ function animateSlotSpin(spinData, stateAfter) {
     const placeBtn = document.getElementById('spinBtn');
 
     placeBtn.disabled = true;
-    placeBtn.innerHTML = '<span>🎰 Spinning...</span>';
+    placeBtn.innerHTML = '<span>Spinning...</span>';
     resultTextEl.textContent = 'Rolling...';
     resultTextEl.className = 'result-value';
 
@@ -103,7 +110,7 @@ function animateSlotSpin(spinData, stateAfter) {
             }
 
             renderState(stateAfter);
-            
+
             // Show winning/losing notification
             setTimeout(() => {
                 let icon = 'info';
@@ -118,18 +125,18 @@ function animateSlotSpin(spinData, stateAfter) {
 
                 Swal.fire({
                     title: title,
-                    text: spinData.win 
-                        ? `Congratulations! You won ${parseFloat(spinData.payout).toFixed(2)} credits!` 
+                    text: spinData.win
+                        ? `Congratulations! You won ${parseFloat(spinData.payout).toFixed(2)} credits!`
                         : 'Better luck next time!',
                     icon: icon,
-                    confirmButtonText: 'Great!',
-                    confirmButtonColor: '#4ac47d',
+                    confirmButtonText: spinData.win ? 'Great!' : 'Try Again',
+                    confirmButtonColor: spinData.win ? '#4ac47d' : '#e64545',
                     backdrop: `rgba(0,0,0,0.4)`
                 });
             }, 300);
 
             placeBtn.disabled = false;
-            placeBtn.innerHTML = '🎰 SPIN 🎰';
+            placeBtn.innerHTML = 'SPIN';
             isSpinning = false;
         }
     }, 100);
@@ -179,9 +186,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('resetBtn').addEventListener('click', async () => {
         if (isSpinning) return;
-        const res = await apiRequest('reset');
-        renderState(res);
-        Swal.fire('Reset', 'Game has been reset to 100 credits.', 'success');
+        
+        const { isConfirmed: firstConfirm } = await Swal.fire({
+            title: 'Reset Game?',
+            text: 'This will restore your balance to 100 and clear your game history.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I want a fresh start',
+            confirmButtonColor: '#e64545',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (firstConfirm) {
+            const { isConfirmed: finalConfirm } = await Swal.fire({
+                title: 'ARE YOU ABSOLUTELY SURE?',
+                text: 'This action cannot be undone. All your progress will be lost!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'YES, PERMANENT RESET',
+                confirmButtonColor: '#ff0000',
+                cancelButtonText: 'Wait, go back'
+            });
+
+            if (finalConfirm) {
+                const res = await apiRequest('reset');
+                renderState(res);
+                Swal.fire({
+                    title: 'System Reset',
+                    text: 'Your balance has been restored to 100.00.',
+                    icon: 'success',
+                    confirmButtonColor: '#4ac47d'
+                }).then(() => {
+                    window.location.href = 'index.php';
+                });
+            }
+        }
     });
 
     document.getElementById('rulesIcon').addEventListener('click', () => {
@@ -189,14 +228,14 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'Slot Machine Payouts',
             html: `
                 <div style="text-align: left; line-height: 1.6;">
-                    <p>🎰 <strong>How to Win:</strong> Get 3 matching symbols in a row!</p>
-                    <p>🌟 <strong>Wild Symbol:</strong> The Star symbol is WILD and substitutes for any other symbol.</p>
+                    <p><strong>How to Win:</strong> Get 3 matching symbols in a row!</p>
+                    <p><strong>Wild Symbol:</strong> The Star symbol is WILD and substitutes for any other symbol.</p>
                     <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
-                    <p>🍇 <strong>3 Grapes:</strong> 1.5x bet (~1 in 10 spins)</p>
-                    <p>🍊 <strong>3 Oranges:</strong> 1.5x bet (~1 in 10 spins)</p>
-                    <p>🍀 <strong>3 Clovers:</strong> 3x bet (~1 in 25 spins)</p>
-                    <p>💎 <strong>3 Diamonds:</strong> 5x bet (~1 in 150 spins)</p>
-                    <p>🌟 <strong>3 Stars:</strong> 10x bet (~1 in 1000 spins)</p>
+                    <p><strong>3 Grapes:</strong> 1.5x bet (~1 in 10 spins)</p>
+                    <p><strong>3 Oranges:</strong> 1.5x bet (~1 in 10 spins)</p>
+                    <p><strong>3 Clovers:</strong> 3x bet (~1 in 25 spins)</p>
+                    <p><strong>3 Diamonds:</strong> 5x bet (~1 in 150 spins)</p>
+                    <p><strong>3 Stars:</strong> 10x bet (~1 in 1000 spins)</p>
                 </div>
             `,
             icon: 'info',

@@ -23,7 +23,11 @@ function getGameData($gameName)
 
 function saveGameData($gameName, $data)
 {
-    $file = __DIR__ . "/../data/{$gameName}.json";
+    $dir = __DIR__ . "/../data";
+    if (!is_dir($dir)) {
+        mkdir($dir, 0777, true);
+    }
+    $file = "{$dir}/{$gameName}.json";
     file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
 }
 
@@ -47,4 +51,45 @@ function saveUserData($gameName, $userData)
     $allData = getGameData($gameName);
     $allData[$userId] = $userData;
     saveGameData($gameName, $allData);
+}
+
+function getSharedBalance()
+{
+    $userId = getUserId();
+    $allData = getGameData('global_balance');
+    if (!isset($allData[$userId])) {
+        $allData[$userId] = [
+            'balance' => 100.00,
+            'total_bets' => 0,
+            'total_spent' => 0,
+            'last_blessing' => 0
+        ];
+        saveGameData('global_balance', $allData);
+    }
+    return $allData[$userId];
+}
+
+function saveSharedBalance($data)
+{
+    $userId = getUserId();
+    $allData = getGameData('global_balance');
+    $allData[$userId] = $data;
+    saveGameData('global_balance', $allData);
+}
+
+function updateSharedBalance($delta)
+{
+    $data = getSharedBalance();
+    $data['balance'] += (float)$delta;
+    saveSharedBalance($data);
+    return $data['balance'];
+}
+
+function recordBet($amount)
+{
+    $data = getSharedBalance();
+    $data['total_bets']++;
+    $data['total_spent'] += (float)$amount;
+    saveSharedBalance($data);
+    return $data;
 }

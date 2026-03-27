@@ -6,8 +6,7 @@
     <title>Slot Machine - Casino Games</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="slot-script.js" defer></script>
-    <script src="ads.js" defer></script>
+    <script src="scripts/slot-script.js" defer></script>
     <style>
         @keyframes rollDown {
             0% { transform: translateY(-70%); opacity: 0; }
@@ -112,7 +111,7 @@
                                 </div>
                                 <form id="spinForm">
                                     <input type="number" id="betAmount" class="stake-input" step="0.01" placeholder="Enter bet amount" value="10.00" required />
-                                    <button type="submit" id="spinBtn" class="btn-primary" style="margin-top: 16px; width: 100%;">🎰 SPIN 🎰</button>
+                                    <button type="submit" id="spinBtn" class="btn-primary" style="margin-top: 16px; width: 100%;">SPIN</button>
                                 </form>
                             </div>
                             

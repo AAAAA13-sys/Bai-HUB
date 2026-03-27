@@ -23,6 +23,13 @@ async function apiRequest(action, data = {}) {
 function renderState(state) {
     document.getElementById('scoreValue').textContent = parseFloat(state.balance).toFixed(2);
 
+    // Show/Hide reset button: Only show if balance != 100 OR history has entries
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        const isDefault = parseFloat(state.balance) === 100 && (!state.history || state.history.length === 0);
+        resetBtn.style.display = isDefault ? 'none' : 'inline-block';
+    }
+
     const historyList = document.getElementById('historyList');
     historyList.innerHTML = '';
 
@@ -129,7 +136,7 @@ function animateDiceRoll(rollData, stateAfter) {
                 }
 
                 renderState(stateAfter);
-                
+
                 // Show winning/losing notification
                 setTimeout(() => {
                     let icon = 'info';
@@ -144,12 +151,12 @@ function animateDiceRoll(rollData, stateAfter) {
 
                     Swal.fire({
                         title: title,
-                        text: rollData.status === 'win' 
-                            ? `Congratulations! You won ${parseFloat(rollData.payout).toFixed(2)} credits!` 
+                        text: rollData.status === 'win'
+                            ? `Congratulations! You won ${parseFloat(rollData.payout).toFixed(2)} credits!`
                             : 'Better luck next time!',
                         icon: icon,
-                        confirmButtonText: 'Great!',
-                        confirmButtonColor: '#4ac47d',
+                        confirmButtonText: rollData.status === 'win' ? 'Great!' : 'Try Again',
+                        confirmButtonColor: rollData.status === 'win' ? '#4ac47d' : '#e64545',
                         backdrop: `rgba(0,0,0,0.4)`
                     });
                 }, 300);
@@ -219,6 +226,22 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const betDescription = currentBetType === 'number'
+            ? `Number ${currentBetValue}`
+            : (currentBetValue.charAt(0).toUpperCase() + currentBetValue.slice(1));
+
+        const { isConfirmed } = await Swal.fire({
+            title: 'Confirm Your Bet',
+            html: `You are about to bet <strong>${bet.toFixed(2)} credits</strong> on <strong>${betDescription}</strong>.<br>Are you sure?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, Roll it!',
+            confirmButtonColor: '#4ac47d',
+            cancelButtonText: 'Wait, I need to change'
+        });
+
+        if (!isConfirmed) return;
+
         const res = await apiRequest('play', {
             bet_type: currentBetType,
             bet_value: currentBetValue,
@@ -234,9 +257,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('resetBtn').addEventListener('click', async () => {
         if (isRolling) return;
-        const res = await apiRequest('reset');
-        renderState(res);
-        Swal.fire('Reset', 'Game has been reset to 100 credits.', 'success');
+
+        const { isConfirmed: firstConfirm } = await Swal.fire({
+            title: 'Reset Game?',
+            text: 'This will restore your balance to 100 and clear your game history.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I want a fresh start',
+            confirmButtonColor: '#e64545',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (firstConfirm) {
+            const { isConfirmed: finalConfirm } = await Swal.fire({
+                title: 'ARE YOU ABSOLUTELY SURE?',
+                text: 'This action cannot be undone. All your progress will be lost!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'YES, PERMANENT RESET',
+                confirmButtonColor: '#ff0000',
+                cancelButtonText: 'Wait, go back'
+            });
+
+            if (finalConfirm) {
+                const res = await apiRequest('reset');
+                renderState(res);
+                Swal.fire({
+                    title: 'System Reset',
+                    text: 'Your balance has been restored to 100.00.',
+                    icon: 'success',
+                    confirmButtonColor: '#4ac47d'
+                }).then(() => {
+                    window.location.href = 'index.php';
+                });
+            }
+        }
     });
 
     document.getElementById('rulesIcon').addEventListener('click', () => {
@@ -244,15 +299,15 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'Dice Game Rules',
             html: `
                 <div style="text-align: left; line-height: 1.6;">
-                    <p>🎲 <strong>How to Play:</strong> Select a bet type and amount, then roll the dice!</p>
-                    <p>📈 <strong>Pattern Bets (2x Payout):</strong></p>
+                    <p><strong>How to Play:</strong> Select a bet type and amount, then roll the dice!</p>
+                    <p><strong>Pattern Bets (2x Payout):</strong></p>
                     <ul>
                         <li><strong>Odd/Even:</strong> Bet on the total sum being odd or even.</li>
                         <li><strong>Low (3-10):</strong> Bet on the total sum being between 3 and 10.</li>
                         <li><strong>High (11-18):</strong> Bet on the total sum being between 11 and 18.</li>
                     </ul>
-                    <p>🎯 <strong>Exact Number (10x Payout):</strong> Bet on the exact sum of the three dice (3-18).</p>
-                    <p>⚖️ <strong>Probabilities:</strong> Pattern bets have a 50% win probability. Exact numbers vary.</p>
+                    <p><strong>Exact Number (10x Payout):</strong> Bet on the exact sum of the three dice (3-18).</p>
+                    <p><strong>Probabilities:</strong> Pattern bets have a 50% win probability. Exact numbers vary.</p>
                 </div>
             `,
             icon: 'info',

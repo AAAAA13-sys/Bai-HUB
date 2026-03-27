@@ -6,8 +6,7 @@
     <title>Blackjack - Casino Games</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="blackjack-script.js" defer></script>
-    <script src="ads.js" defer></script>
+    <script src="scripts/blackjack-script.js" defer></script>
 </head>
 <body>
     <a href="index.php" class="home-btn" title="Home">

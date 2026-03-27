@@ -58,14 +58,16 @@ class DiceGame {
 $payload = json_decode(file_get_contents('php://input'), true);
 $action = $payload['action'] ?? '';
 
-$userData = getUserData('dice');
-$score = (float)$userData['balance'];
+$sharedData = getSharedBalance();
+$score = (float)$sharedData['balance'];
+$userData = getUserData('dice'); // Still used for history
 $history = $userData['history'];
 
 $response = [
     'success' => true,
     'balance' => $score,
     'history' => $history,
+    'total_bets' => $sharedData['total_bets'],
     'error' => null
 ];
 
@@ -75,7 +77,12 @@ if ($action === 'init') {
 }
 
 if ($action === 'reset') {
-    $userData['balance'] = 100.00;
+    $sharedData['balance'] = 100.00;
+    $sharedData['total_bets'] = 0;
+    $sharedData['total_spent'] = 0;
+    $sharedData['last_blessing'] = 0;
+    saveSharedBalance($sharedData);
+    
     $userData['history'] = [];
     saveUserData('dice', $userData);
     
@@ -97,15 +104,24 @@ if ($action === 'play') {
         $response['error'] = "Insufficient balance! You have " . number_format($score, 2, '.', '') . " credits.";
         $response['success'] = false;
     } else {
+        $sharedData = recordBet($bet); // Increment total_bets
+        $isLucky = ($sharedData['total_bets'] % 10 === 0 && random_int(1, 100) <= 50);
+        
         $game = new DiceGame();
         $dice = $game->rollDice();
         $total = array_sum($dice);
         
         $result = $game->calculateWin($betType, $betValue, $bet, $total);
-        $winAmount = $result['points'];
         
-        $newScore = $score - $bet + $winAmount;
-        $userData['balance'] = $newScore;
+        // Lucky mechanic: if lost on a lucky roll, try one more time
+        if (!$result['win'] && $isLucky) {
+            $dice = $game->rollDice();
+            $total = array_sum($dice);
+            $result = $game->calculateWin($betType, $betValue, $bet, $total);
+        }
+        
+        $winAmount = $result['points'];
+        $newScore = updateSharedBalance(-$bet + $winAmount);
         
         $label = ($betType === 'number') ? "Number $betValue" : $game->getPatterns()[$betValue]['label'];
         
@@ -116,16 +132,18 @@ if ($action === 'play') {
             'total' => $total,
             'win' => $result['win'],
             'payout' => $winAmount,
-            'status' => $result['win'] ? 'win' : 'lose'
+            'status' => $result['win'] ? 'win' : 'lose',
+            'lucky' => $isLucky
         ];
         
         array_unshift($userData['history'], $round);
         $userData['history'] = array_slice($userData['history'], 0, 10);
-        saveUserData('dice', $userData);
+        saveUserData('dice', $userData); // Keep history per game
         
         $response['balance'] = $newScore;
         $response['history'] = $userData['history'];
         $response['roll'] = $round;
+        $response['is_lucky'] = $isLucky;
     }
     
     echo json_encode($response);

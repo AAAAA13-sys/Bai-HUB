@@ -9,7 +9,7 @@ session_start();
     <title>Casino Games - Home</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="ads.js" defer></script>
+    <script src="scripts/blessing.js" defer></script>
 </head>
 <body>
     <main class="container">
@@ -71,7 +71,7 @@ session_start();
             
             <div class="info-section">
                 <div class="info-card">
-                    <h3>🎮 How to Play</h3>
+                    <h3>How to Play</h3>
                     <p>Each game has its own rules and multipliers. Start with 100 credits and try to grow your balance!</p>
                 </div>
                 <div class="info-card">

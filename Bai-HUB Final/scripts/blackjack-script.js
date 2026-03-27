@@ -11,6 +11,13 @@ function renderState(state) {
     const { balance, gameData, history, currentBet } = state;
     document.getElementById('scoreValue').textContent = parseFloat(balance).toFixed(2);
 
+    // Show/Hide reset button: Only show if balance != 100 OR history has entries
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        const isDefault = parseFloat(balance) === 100 && (!history || history.length === 0);
+        resetBtn.style.display = isDefault ? 'none' : 'inline-block';
+    }
+
     const displayBetEl = document.getElementById('displayBet');
     if (gameData && state.currentBet) {
         displayBetEl.textContent = parseFloat(state.currentBet).toFixed(2) + ' credits';
@@ -27,11 +34,15 @@ function renderState(state) {
     dealerArea.innerHTML = '';
     playerArea.innerHTML = '';
 
+    const suitMap = { 'H': '♥', 'S': '♠', 'D': '♦', 'C': '♣', '?': '?' };
+    const suitColor = { 'H': '#e64545', 'D': '#e64545', 'S': '#000000ff', 'C': '#000000ff', '?': '#000000ff' };
+
     if (gameData) {
         gameData.dealerHand.forEach(card => {
             const el = document.createElement('div');
             el.className = 'game-card';
-            el.textContent = card.value + card.suit;
+            if (card.suit !== '?') el.style.color = suitColor[card.suit];
+            el.textContent = card.value + (suitMap[card.suit] || card.suit);
             dealerArea.appendChild(el);
         });
         dealerTotal.textContent = gameData.dealerValue;
@@ -39,7 +50,8 @@ function renderState(state) {
         gameData.playerHand.forEach(card => {
             const el = document.createElement('div');
             el.className = 'game-card';
-            el.textContent = card.value + card.suit;
+            el.style.color = suitColor[card.suit];
+            el.textContent = card.value + (suitMap[card.suit] || card.suit);
             playerArea.appendChild(el);
         });
         playerTotal.textContent = gameData.playerValue;
@@ -65,7 +77,7 @@ function renderState(state) {
             const isPush = round.status === 'push';
             const sign = isWin ? '+' : (isPush ? '±' : '-');
             let amount = 0;
-            
+
             if (isWin) amount = parseFloat(round.payout) - parseFloat(round.bet);
             else if (isPush) amount = 0;
             else amount = parseFloat(round.bet);
@@ -91,7 +103,7 @@ function renderState(state) {
         playingActions.style.display = 'block';
 
         const doubleBtn = document.getElementById('doubleBtn');
-        if (gameData.playerHand.length === 2 && balance >= state.currentBet) {
+        if (gameData.playerHand.length === 2 && balance >= state.currentBet * 2) {
             doubleBtn.style.display = 'inline-block';
         } else {
             doubleBtn.style.display = 'none';
@@ -112,8 +124,8 @@ function showResultPopup(gameData) {
                 title: gameData.status.toUpperCase(),
                 text: gameData.message,
                 icon: icon,
-                confirmButtonText: 'Great!',
-                confirmButtonColor: '#4ac47d',
+                confirmButtonText: gameData.status === 'win' ? 'Great!' : 'Try Again',
+                confirmButtonColor: gameData.status === 'win' ? '#4ac47d' : '#e64545',
                 backdrop: `rgba(0,0,0,0.4)`
             });
         }, 500);
@@ -162,8 +174,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('resetBtn').addEventListener('click', async () => {
-        const res = await apiRequest('reset');
-        renderState(res);
+        const { isConfirmed: firstConfirm } = await Swal.fire({
+            title: 'Reset Game?',
+            text: 'This will restore your balance to 100 and clear your game history.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I want a fresh start',
+            confirmButtonColor: '#e64545',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (firstConfirm) {
+            const { isConfirmed: finalConfirm } = await Swal.fire({
+                title: 'ARE YOU ABSOLUTELY SURE?',
+                text: 'This action cannot be undone. All your progress will be lost!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'YES, PERMANENT RESET',
+                confirmButtonColor: '#ff0000',
+                cancelButtonText: 'Wait, go back'
+            });
+
+            if (finalConfirm) {
+                const res = await apiRequest('reset');
+                renderState(res);
+                Swal.fire({
+                    title: 'System Reset',
+                    text: 'Your balance has been restored to 100.00.',
+                    icon: 'success',
+                    confirmButtonColor: '#4ac47d'
+                }).then(() => {
+                    window.location.href = 'index.php';
+                });
+            }
+        }
     });
 
     const quickStakes = document.querySelectorAll('.quick-stake');
@@ -182,11 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
             title: 'Blackjack Rules',
             html: `
                 <div style="text-align: left; line-height: 1.6;">
-                    <p>🎯 <strong>Objective:</strong> Beat the dealer's hand without going over 21.</p>
-                    <p>💎 <strong>Payout:</strong> Blackjack (21 with first 2 cards) pays <strong>2.5x</strong> your bet.</p>
-                    <p>🃏 <strong>Dealer Rule:</strong> Dealer must stand on <strong>17</strong> or higher.</p>
-                    <p>🔄 <strong>Push:</strong> If you and the dealer have the same total, it's a push and your bet is returned.</p>
-                    <p>⚖️ <strong>Odds:</strong> Win Probability is ~42.22% (House Edge ~0.5%).</p>
+                    <p><strong>Objective:</strong> Beat the dealer's hand without going over 21.</p>
+                    <p><strong>Payout:</strong> Blackjack (21 with first 2 cards) pays <strong>2.5x</strong> your bet.</p>
+                    <p><strong>Dealer Rule:</strong> Dealer must stand on <strong>17</strong> or higher.</p>
+                    <p><strong>Push:</strong> If you and the dealer have the same total, it's a push and your bet is returned.</p>
+                    <p><strong>Odds:</strong> Win Probability is ~42.22% (House Edge ~0.5%).</p>
                 </div>
             `,
             icon: 'info',
