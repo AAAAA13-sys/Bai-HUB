@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reason === 'broke') {
             title = "CASINO RESCUE";
             text = "Down on your luck? Here's a boost to get you back in the game!";
-            icon = "🙏";
+            icon = "👼";
         } else if (reason === 'high_roller') {
             title = "LOYALTY REWARD";
             text = "A true High Roller deserves a tribute. Accept this gift!";
