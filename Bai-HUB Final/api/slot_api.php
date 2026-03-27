@@ -5,16 +5,18 @@ require_once __DIR__ . '/json_storage.php';
 
 class SlotMachine {
     public const SYMBOLS = [
-        'grapes' => ['name' => 'grapes.svg', 'multiplier' => 1.5, 'type' => 'fruit'],
-        'orange' => ['name' => 'orange.svg', 'multiplier' => 1.5, 'type' => 'fruit'],
+        'grapes' => ['name' => 'grapes.svg', 'multiplier' => 2, 'type' => 'fruit'],
+        'orange' => ['name' => 'orange.svg', 'multiplier' => 2, 'type' => 'fruit'],
         'clover' => ['name' => 'clover.svg', 'multiplier' => 3, 'type' => 'special'],
         'diamond' => ['name' => 'cut-diamond.svg', 'multiplier' => 5, 'type' => 'jackpot'],
         'star' => ['name' => 'star.svg', 'multiplier' => 0, 'type' => 'wild']
     ];
     
     private array $reels = [];
+    private bool $isLucky = false;
     
-    public function __construct() {
+    public function __construct(bool $lucky = false) {
+        $this->isLucky = $lucky;
         $this->initializeReels();
     }
     
@@ -23,10 +25,10 @@ class SlotMachine {
         foreach (self::SYMBOLS as $key => $symbol) {
             $weight = 5;
             switch ($symbol['type']) {
-                case 'jackpot': $weight = 1; break;
-                case 'wild': $weight = 2; break;
-                case 'special': $weight = 3; break;
-                default: $weight = 5; break;
+                case 'jackpot': $weight = $this->isLucky ? 5 : 1; break;
+                case 'wild': $weight = $this->isLucky ? 5 : 2; break;
+                case 'special': $weight = $this->isLucky ? 8 : 3; break;
+                default: $weight = $this->isLucky ? 2 : 5; break;
             }
             for ($i = 0; $i < $weight; $i++) {
                 $symbolPool[] = $key;
@@ -101,13 +103,15 @@ class SlotMachine {
 $payload = json_decode(file_get_contents('php://input'), true);
 $action = $payload['action'] ?? '';
 
+$sharedData = getSharedBalance();
+$score = (float)$sharedData['balance'];
 $userData = getUserData('slot');
-$score = (float)$userData['balance'];
 
 $response = [
     'success' => true,
     'balance' => $score,
     'history' => $userData['history'],
+    'total_bets' => $sharedData['total_bets'],
     'error' => null
 ];
 
@@ -117,7 +121,12 @@ if ($action === 'init') {
 }
 
 if ($action === 'reset') {
-    $userData['balance'] = 100.00;
+    $sharedData['balance'] = 100.00;
+    $sharedData['total_bets'] = 0;
+    $sharedData['total_spent'] = 0;
+    $sharedData['last_blessing'] = 0;
+    saveSharedBalance($sharedData);
+    
     $userData['history'] = [];
     saveUserData('slot', $userData);
     
@@ -137,17 +146,19 @@ if ($action === 'spin') {
         $response['error'] = "Insufficient balance! You have " . number_format($score, 2, '.', '') . " credits.";
         $response['success'] = false;
     } else {
-        $slot = new SlotMachine();
+        $sharedData = recordBet($bet);
+        $isLucky = ($sharedData['total_bets'] % 10 === 0 && random_int(1, 100) <= 50);
+        
+        $slot = new SlotMachine($isLucky);
         $result = $slot->spin();
         $winResult = $slot->calculateWin($result, $bet);
         
-        $newScore = $score - $bet;
-        $message = "LOSE! Better luck next time!";
-        if ($winResult['win']) {
-            $newScore += $winResult['payout'];
-            $message = "WIN! You won " . number_format($winResult['payout'], 2, '.', '') . " credits! (" . $winResult['multiplier'] . "x multiplier)";
-        }
-        $userData['balance'] = $newScore;
+        $winAmount = $winResult['payout'];
+        $newScore = updateSharedBalance(-$bet + $winAmount);
+        
+        $message = $winResult['win'] 
+            ? "WIN! You won " . number_format($winAmount, 2, '.', '') . " credits! (" . $winResult['multiplier'] . "x multiplier)"
+            : "LOSE! Better luck next time!";
         
         $symbolsMapped = array_map(function($symbol) use ($slot) {
             return [
@@ -163,7 +174,8 @@ if ($action === 'spin') {
             'multiplier' => $winResult['multiplier'],
             'symbols' => $result,
             'message' => $message,
-            'status' => $winResult['win'] ? 'win' : 'lose'
+            'status' => $winResult['win'] ? 'win' : 'lose',
+            'lucky' => $isLucky
         ];
         
         array_unshift($userData['history'], $round);
@@ -177,7 +189,8 @@ if ($action === 'spin') {
             'win' => $winResult['win'],
             'winningSymbol' => $winResult['winningSymbol'],
             'message' => $message,
-            'payout' => $winResult['payout']
+            'payout' => $winResult['payout'],
+            'is_lucky' => $isLucky
         ];
     }
     

@@ -12,7 +12,8 @@ if (!$gameName) {
 }
 
 // Cooldown check (10 minutes = 600 seconds)
-$lastClaim = getGlobalData('last_ad_claim');
+$sharedData = getSharedBalance();
+$lastClaim = $sharedData['last_ad_claim'] ?? 0;
 $currentTime = time();
 $cooldownSeconds = 600;
 
@@ -27,15 +28,14 @@ if ($lastClaim && ($currentTime - $lastClaim) < $cooldownSeconds) {
     exit;
 }
 
-$userData = getUserData($gameName);
 $creditsToAdd = rand(100, 500);
-$userData['balance'] += $creditsToAdd;
+$sharedData['balance'] += $creditsToAdd;
+$sharedData['last_ad_claim'] = $currentTime;
 
-saveUserData($gameName, $userData);
-saveGlobalData('last_ad_claim', $currentTime);
+saveSharedBalance($sharedData);
 
 echo json_encode([
     'success' => true,
     'creditsAdded' => $creditsToAdd,
-    'newBalance' => $userData['balance']
+    'newBalance' => $sharedData['balance']
 ]);

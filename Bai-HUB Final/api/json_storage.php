@@ -53,20 +53,43 @@ function saveUserData($gameName, $userData)
     saveGameData($gameName, $allData);
 }
 
-function getGlobalData($key)
+function getSharedBalance()
 {
     $userId = getUserId();
-    $allData = getGameData('global_meta');
-    return $allData[$userId][$key] ?? null;
+    $allData = getGameData('global_balance');
+    if (!isset($allData[$userId])) {
+        $allData[$userId] = [
+            'balance' => 100.00,
+            'total_bets' => 0,
+            'total_spent' => 0,
+            'last_blessing' => 0
+        ];
+        saveGameData('global_balance', $allData);
+    }
+    return $allData[$userId];
 }
 
-function saveGlobalData($key, $value)
+function saveSharedBalance($data)
 {
     $userId = getUserId();
-    $allData = getGameData('global_meta');
-    if (!isset($allData[$userId])) {
-        $allData[$userId] = [];
-    }
-    $allData[$userId][$key] = $value;
-    saveGameData('global_meta', $allData);
+    $allData = getGameData('global_balance');
+    $allData[$userId] = $data;
+    saveGameData('global_balance', $allData);
+}
+
+function updateSharedBalance($delta)
+{
+    $data = getSharedBalance();
+    $data['balance'] += (float)$delta;
+    saveSharedBalance($data);
+    return $data['balance'];
+}
+
+function recordBet($amount)
+{
+    $data = getSharedBalance();
+    $data['total_bets']++;
+    $data['total_spent'] += (float)$amount;
+    saveSharedBalance($data);
+    return $data;
 }

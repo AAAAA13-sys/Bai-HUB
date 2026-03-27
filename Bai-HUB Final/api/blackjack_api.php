@@ -113,7 +113,9 @@ class BlackjackGame {
         }
         
         $dealerValue = $this->calculateHandValue($this->dealerHand);
-        while ($dealerValue < 17) {
+        $standThreshold = (isset($_SESSION['blackjack_lucky']) && $_SESSION['blackjack_lucky']) ? 15 : 17;
+        
+        while ($dealerValue < $standThreshold) {
             $this->dealerHand[] = $this->drawCard();
             $dealerValue = $this->calculateHandValue($this->dealerHand);
         }
@@ -152,8 +154,9 @@ class BlackjackGame {
 $payload = json_decode(file_get_contents('php://input'), true);
 $action = $payload['action'] ?? '';
 
+$sharedData = getSharedBalance();
+$score = (float)$sharedData['balance'];
 $userData = getUserData('blackjack');
-$score = (float)$userData['balance'];
 $history = $userData['history'];
 
 $game = isset($_SESSION['blackjack_game']) ? $_SESSION['blackjack_game'] : null;
@@ -166,6 +169,8 @@ $response = [
     'balance' => $score,
     'gameData' => $gameData,
     'history' => $history,
+    'currentBet' => $currentBet,
+    'total_bets' => $sharedData['total_bets'],
     'error' => null
 ];
 
@@ -176,13 +181,19 @@ if ($action === 'init') {
 }
 
 if ($action === 'reset') {
-    $userData['balance'] = 100.00;
+    $sharedData['balance'] = 100.00;
+    $sharedData['total_bets'] = 0;
+    $sharedData['total_spent'] = 0;
+    $sharedData['last_blessing'] = 0;
+    saveSharedBalance($sharedData);
+    
     $userData['history'] = [];
     saveUserData('blackjack', $userData);
     
     $_SESSION['blackjack_game'] = null;
     $_SESSION['blackjack_current_bet'] = null;
     $_SESSION['blackjack_game_data'] = null;
+    $_SESSION['blackjack_lucky'] = false;
     
     $response['balance'] = 100.00;
     $response['history'] = [];
@@ -210,6 +221,10 @@ if ($action === 'place_bet') {
         $response['error'] = "Insufficient balance! You have " . number_format($score, 2, '.', '') . " credits.";
         $response['success'] = false;
     } else {
+        $sharedData = recordBet($bet);
+        $isLucky = ($sharedData['total_bets'] % 10 === 0 && random_int(1, 100) <= 50);
+        $_SESSION['blackjack_lucky'] = $isLucky;
+        
         $_SESSION['blackjack_current_bet'] = $bet;
         $game = new BlackjackGame();
         $_SESSION['blackjack_game'] = $game;
@@ -232,8 +247,7 @@ if ($action === 'place_bet') {
                 $outcomeStatus = 'win';
             }
             
-            $newScore = $score - $currentBet + $winAmount;
-            $userData['balance'] = $newScore;
+            $newScore = updateSharedBalance(-$currentBet + $winAmount);
             
             $historyEntry = [
                 'bet' => $currentBet,
@@ -259,11 +273,13 @@ if ($action === 'place_bet') {
             $response['gameActive'] = false;
             $response['balance'] = $newScore;
             $response['history'] = $userData['history'];
+            $response['is_lucky'] = $isLucky;
         } else {
             $_SESSION['blackjack_game_data'] = $gameData;
         }
         $response['gameData'] = $gameData;
         $response['currentBet'] = $currentBet;
+        $response['is_lucky'] = $isLucky;
     }
     echo json_encode($response);
     exit;
@@ -287,8 +303,7 @@ if ($action === 'hit' && $game && $game->getGameState() === 'playing') {
         $outcomeStatus = 'lose';
         $message = $standResult['message'];
         
-        $newScore = $score - $currentBet;
-        $userData['balance'] = $newScore;
+        $newScore = updateSharedBalance(-$currentBet);
         
         $historyEntry = [
             'bet' => $currentBet,
@@ -315,6 +330,7 @@ if ($action === 'hit' && $game && $game->getGameState() === 'playing') {
     }
     
     $response['gameData'] = $gameData;
+    $response['is_lucky'] = $_SESSION['blackjack_lucky'] ?? false;
     echo json_encode($response);
     exit;
 }
@@ -335,8 +351,7 @@ if ($action === 'stand' && $game && $game->getGameState() === 'playing') {
         $message = $result['message'];
     }
     
-    $newScore = $score - $currentBet + $winAmount;
-    $userData['balance'] = $newScore;
+    $newScore = updateSharedBalance(-$currentBet + $winAmount);
     
     $historyEntry = [
         'bet' => $currentBet,
@@ -364,6 +379,7 @@ if ($action === 'stand' && $game && $game->getGameState() === 'playing') {
     $response['gameData'] = $gameData;
     $response['balance'] = $newScore;
     $response['history'] = $userData['history'];
+    $response['is_lucky'] = $_SESSION['blackjack_lucky'] ?? false;
     
     echo json_encode($response);
     exit;
@@ -391,8 +407,7 @@ if ($action === 'double_down' && $game && $game->getGameState() === 'playing') {
             $message = $result['message'];
         }
         
-        $newScore = $score - $currentBet + $winAmount;
-        $userData['balance'] = $newScore;
+        $newScore = updateSharedBalance(-$currentBet + $winAmount);
         
         $historyEntry = [
             'bet' => $currentBet,
@@ -407,6 +422,8 @@ if ($action === 'double_down' && $game && $game->getGameState() === 'playing') {
         saveUserData('blackjack', $userData);
         
         $gameData = $_SESSION['blackjack_game_data'];
+        $gameData['playerHand'] = $game->playerHand;
+        $gameData['playerValue'] = $result['playerValue'];
         $gameData['dealerHand'] = $result['dealerHand'];
         $gameData['dealerValue'] = $result['dealerValue'];
         $gameData['status'] = $outcomeStatus;
@@ -420,6 +437,7 @@ if ($action === 'double_down' && $game && $game->getGameState() === 'playing') {
         $response['gameData'] = $gameData;
         $response['balance'] = $newScore;
         $response['history'] = $userData['history'];
+        $response['is_lucky'] = $_SESSION['blackjack_lucky'] ?? false;
     } else {
         $response['success'] = false;
         $response['error'] = "Insufficient balance to Double Down.";

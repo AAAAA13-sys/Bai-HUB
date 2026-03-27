@@ -11,6 +11,13 @@ function renderState(state) {
     const { balance, gameData, history, currentBet } = state;
     document.getElementById('scoreValue').textContent = parseFloat(balance).toFixed(2);
 
+    // Show/Hide reset button: Only show if balance != 100 OR history has entries
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        const isDefault = parseFloat(balance) === 100 && (!history || history.length === 0);
+        resetBtn.style.display = isDefault ? 'none' : 'inline-block';
+    }
+
     const displayBetEl = document.getElementById('displayBet');
     if (gameData && state.currentBet) {
         displayBetEl.textContent = parseFloat(state.currentBet).toFixed(2) + ' credits';
@@ -27,11 +34,15 @@ function renderState(state) {
     dealerArea.innerHTML = '';
     playerArea.innerHTML = '';
 
+    const suitMap = { 'H': '♥', 'S': '♠', 'D': '♦', 'C': '♣', '?': '?' };
+    const suitColor = { 'H': '#e64545', 'D': '#e64545', 'S': '#000000ff', 'C': '#000000ff', '?': '#000000ff' };
+
     if (gameData) {
         gameData.dealerHand.forEach(card => {
             const el = document.createElement('div');
             el.className = 'game-card';
-            el.textContent = card.value + card.suit;
+            if (card.suit !== '?') el.style.color = suitColor[card.suit];
+            el.textContent = card.value + (suitMap[card.suit] || card.suit);
             dealerArea.appendChild(el);
         });
         dealerTotal.textContent = gameData.dealerValue;
@@ -39,7 +50,8 @@ function renderState(state) {
         gameData.playerHand.forEach(card => {
             const el = document.createElement('div');
             el.className = 'game-card';
-            el.textContent = card.value + card.suit;
+            el.style.color = suitColor[card.suit];
+            el.textContent = card.value + (suitMap[card.suit] || card.suit);
             playerArea.appendChild(el);
         });
         playerTotal.textContent = gameData.playerValue;
@@ -112,8 +124,8 @@ function showResultPopup(gameData) {
                 title: gameData.status.toUpperCase(),
                 text: gameData.message,
                 icon: icon,
-                confirmButtonText: 'Great!',
-                confirmButtonColor: '#4ac47d',
+                confirmButtonText: gameData.status === 'win' ? 'Great!' : 'Try Again',
+                confirmButtonColor: gameData.status === 'win' ? '#4ac47d' : '#e64545',
                 backdrop: `rgba(0,0,0,0.4)`
             });
         }, 500);
@@ -162,8 +174,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('resetBtn').addEventListener('click', async () => {
-        const res = await apiRequest('reset');
-        renderState(res);
+        const { isConfirmed: firstConfirm } = await Swal.fire({
+            title: 'Reset Game?',
+            text: 'This will restore your balance to 100 and clear your game history.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I want a fresh start',
+            confirmButtonColor: '#e64545',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (firstConfirm) {
+            const { isConfirmed: finalConfirm } = await Swal.fire({
+                title: 'ARE YOU ABSOLUTELY SURE?',
+                text: 'This action cannot be undone. All your progress will be lost!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'YES, PERMANENT RESET',
+                confirmButtonColor: '#ff0000',
+                cancelButtonText: 'Wait, go back'
+            });
+
+            if (finalConfirm) {
+                const res = await apiRequest('reset');
+                renderState(res);
+                Swal.fire({
+                    title: 'System Reset',
+                    text: 'Your balance has been restored to 100.00.',
+                    icon: 'success',
+                    confirmButtonColor: '#4ac47d'
+                }).then(() => {
+                    window.location.href = 'index.php';
+                });
+            }
+        }
     });
 
     const quickStakes = document.querySelectorAll('.quick-stake');

@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="scripts/slot-script.js" defer></script>
-    <script src="scripts/ads.js" defer></script>
     <style>
         @keyframes rollDown {
             0% { transform: translateY(-70%); opacity: 0; }

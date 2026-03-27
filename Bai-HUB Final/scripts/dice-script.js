@@ -23,6 +23,13 @@ async function apiRequest(action, data = {}) {
 function renderState(state) {
     document.getElementById('scoreValue').textContent = parseFloat(state.balance).toFixed(2);
 
+    // Show/Hide reset button: Only show if balance != 100 OR history has entries
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        const isDefault = parseFloat(state.balance) === 100 && (!state.history || state.history.length === 0);
+        resetBtn.style.display = isDefault ? 'none' : 'inline-block';
+    }
+
     const historyList = document.getElementById('historyList');
     historyList.innerHTML = '';
 
@@ -148,8 +155,8 @@ function animateDiceRoll(rollData, stateAfter) {
                             ? `Congratulations! You won ${parseFloat(rollData.payout).toFixed(2)} credits!`
                             : 'Better luck next time!',
                         icon: icon,
-                        confirmButtonText: 'Great!',
-                        confirmButtonColor: '#4ac47d',
+                        confirmButtonText: rollData.status === 'win' ? 'Great!' : 'Try Again',
+                        confirmButtonColor: rollData.status === 'win' ? '#4ac47d' : '#e64545',
                         backdrop: `rgba(0,0,0,0.4)`
                     });
                 }, 300);
@@ -250,9 +257,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('resetBtn').addEventListener('click', async () => {
         if (isRolling) return;
-        const res = await apiRequest('reset');
-        renderState(res);
-        Swal.fire('Reset', 'Game has been reset to 100 credits.', 'success');
+
+        const { isConfirmed: firstConfirm } = await Swal.fire({
+            title: 'Reset Game?',
+            text: 'This will restore your balance to 100 and clear your game history.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, I want a fresh start',
+            confirmButtonColor: '#e64545',
+            cancelButtonText: 'Cancel'
+        });
+
+        if (firstConfirm) {
+            const { isConfirmed: finalConfirm } = await Swal.fire({
+                title: 'ARE YOU ABSOLUTELY SURE?',
+                text: 'This action cannot be undone. All your progress will be lost!',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'YES, PERMANENT RESET',
+                confirmButtonColor: '#ff0000',
+                cancelButtonText: 'Wait, go back'
+            });
+
+            if (finalConfirm) {
+                const res = await apiRequest('reset');
+                renderState(res);
+                Swal.fire({
+                    title: 'System Reset',
+                    text: 'Your balance has been restored to 100.00.',
+                    icon: 'success',
+                    confirmButtonColor: '#4ac47d'
+                }).then(() => {
+                    window.location.href = 'index.php';
+                });
+            }
+        }
     });
 
     document.getElementById('rulesIcon').addEventListener('click', () => {

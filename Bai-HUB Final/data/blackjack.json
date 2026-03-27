@@ -1,0 +1,23 @@
+{
+    "user_69c5ed3cbccf7_2722": {
+        "balance": 100,
+        "history": [
+            {
+                "bet": 987.5,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 11,
+                "dealerValue": 20,
+                "message": "Dealer wins. Better luck next time!"
+            },
+            {
+                "bet": 395,
+                "status": "win",
+                "payout": 987.5,
+                "playerValue": 21,
+                "dealerValue": 15,
+                "message": "BLACKJACK! You won 987.50 credits!"
+            }
+        ]
+    }
+}

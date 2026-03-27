@@ -9,7 +9,7 @@ session_start();
     <title>Casino Games - Home</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="scripts/ads.js" defer></script>
+    <script src="scripts/blessing.js" defer></script>
 </head>
 <body>
     <main class="container">
