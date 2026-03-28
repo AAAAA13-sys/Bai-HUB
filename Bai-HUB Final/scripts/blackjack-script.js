@@ -138,6 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('betForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const bet = document.getElementById('betAmount').value;
+
+        const isConfirmed = await confirmGameAction('Place Bet?', `Are you sure you want to bet ${parseFloat(bet).toFixed(2)} credits?`, 'Yes, Place Bet!');
+        if (!isConfirmed) return;
+
         const res = await apiRequest('place_bet', { bet });
         if (res.error) {
             Swal.fire('Error', res.error, 'error');
@@ -168,6 +172,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('doubleBtn').addEventListener('click', async () => {
+        const isConfirmed = await confirmGameAction('Double Down?', 'Are you sure you want to double your bet and take exactly one more card?', 'Yes, Double!');
+        if (!isConfirmed) return;
+        
         const res = await apiRequest('double_down');
         if (res.error) {
             Swal.fire('Error', res.error, 'error');
