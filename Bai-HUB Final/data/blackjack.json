@@ -1,0 +1,15 @@
+{
+    "user_69c49efe3669e_1300": {
+        "balance": 100,
+        "history": [
+            {
+                "bet": 238.13,
+                "status": "lose",
+                "payout": 0,
+                "playerValue": 25,
+                "dealerValue": 17,
+                "message": "Bust! You went over 21."
+            }
+        ]
+    }
+}

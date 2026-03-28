@@ -1,0 +1,21 @@
+{
+    "user_69c49efe3669e_1300": {
+        "balance": 100,
+        "history": [
+            {
+                "bet": 59.53,
+                "win": false,
+                "payout": 0,
+                "multiplier": 0,
+                "symbols": [
+                    "orange",
+                    "grapes",
+                    "clover"
+                ],
+                "message": "LOSE! Better luck next time!",
+                "status": "lose",
+                "lucky": false
+            }
+        ]
+    }
+}

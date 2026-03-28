@@ -6,14 +6,28 @@
  * @returns {Promise<boolean>} - Resolves to true if confirmed or if suppression is active.
  */
 async function confirmGameAction(title, html, confirmBtnText = 'Confirm') {
-    const HIDE_KEY = 'hideConfirmUntil';
-    const suppressionTime = localStorage.getItem(HIDE_KEY);
+    const SETTINGS_KEY = 'game_confirmations';
+    // Use filename (e.g., 'blackjack', 'dice', 'slot') as the key for per-game suppression
+    const gameId = window.location.pathname.split('/').pop().replace('.php', '') || 'common';
     
+    // Load all settings from localStorage
+    let settings = {};
+    try {
+        const stored = localStorage.getItem(SETTINGS_KEY);
+        settings = stored ? JSON.parse(stored) : {};
+    } catch (e) {
+        console.error('Error parsing game confirmations settings', e);
+        settings = {};
+    }
+
+    const suppressionTime = settings[gameId];
+    
+    // If suppression is active and has not expired, auto-confirm
     if (suppressionTime && Date.now() < parseInt(suppressionTime)) {
         return true;
     }
 
-    const { value: result } = await Swal.fire({
+    const result = await Swal.fire({
         title: title,
         html: html,
         icon: 'question',
@@ -28,17 +42,23 @@ async function confirmGameAction(title, html, confirmBtnText = 'Confirm') {
             </div>
         `,
         preConfirm: () => {
-            return document.getElementById('dontShowCheckbox').checked;
+            // We return an object instead of a boolean.
+            // Returning 'false' would prevent the modal from closing.
+            return {
+                dontShow: document.getElementById('dontShowCheckbox').checked
+            };
         }
     });
 
-    if (result !== undefined) {
-        // result is true if checkbox was checked, false otherwise
-        if (result === true) {
-            localStorage.setItem(HIDE_KEY, Date.now() + 10 * 60 * 1000);
+    if (result.isConfirmed) {
+        // If the user checked the "Don't show" box, save it to the JSON settings
+        if (result.value && result.value.dontShow) {
+            settings[gameId] = Date.now() + 10 * 60 * 1000;
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
         }
         return true; // Action confirmed
     }
 
     return false; // Action cancelled
 }
+
