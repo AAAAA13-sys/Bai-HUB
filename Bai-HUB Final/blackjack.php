@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (!isset($_SESSION['authorized_entry'])) {
+    header('Location: index.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +13,7 @@
     <title>Blackjack - Casino Games</title>
     <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="scripts/confirm-utils.js" defer></script>
     <script src="scripts/blackjack-script.js" defer></script>
 </head>
 <body>

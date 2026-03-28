@@ -150,6 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('hitBtn').addEventListener('click', async () => {
+        const isConfirmed = await confirmGameAction('Hit?', 'Are you sure you want to take another card?', 'Yes, Hit!');
+        if (!isConfirmed) return;
         const res = await apiRequest('hit');
         renderState(res);
         if (res.gameActive === false) {
@@ -158,6 +160,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('standBtn').addEventListener('click', async () => {
+        const isConfirmed = await confirmGameAction('Stand?', 'Are you sure you want to stand with your current hand?', 'Yes, Stand!');
+        if (!isConfirmed) return;
         const res = await apiRequest('stand');
         renderState(res);
         showResultPopup(res.gameData);

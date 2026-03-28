@@ -176,6 +176,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const isConfirmed = await confirmGameAction(
+            'Confirm Spin',
+            `Are you sure you want to spin with <strong>${bet.toFixed(2)} credits</strong>?`,
+            'Yes, Spin!'
+        );
+
+        if (!isConfirmed) return;
+
         const res = await apiRequest('spin', { bet });
         if (res.error) {
             Swal.fire('Error', res.error, 'error');

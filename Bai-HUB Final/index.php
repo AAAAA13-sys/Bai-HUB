@@ -1,5 +1,6 @@
 <?php
 session_start();
+$_SESSION['authorized_entry'] = true;
 ?>
 <!DOCTYPE html>
 <html lang="en">

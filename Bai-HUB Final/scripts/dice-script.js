@@ -230,15 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
             ? `Number ${currentBetValue}`
             : (currentBetValue.charAt(0).toUpperCase() + currentBetValue.slice(1));
 
-        const { isConfirmed } = await Swal.fire({
-            title: 'Confirm Your Bet',
-            html: `You are about to bet <strong>${bet.toFixed(2)} credits</strong> on <strong>${betDescription}</strong>.<br>Are you sure?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Yes, Roll it!',
-            confirmButtonColor: '#4ac47d',
-            cancelButtonText: 'Wait, I need to change'
-        });
+        const isConfirmed = await confirmGameAction(
+            'Confirm Your Bet',
+            `You are about to bet <strong>${bet.toFixed(2)} credits</strong> on <strong>${betDescription}</strong>.<br>Are you sure?`,
+            'Yes, Roll it!'
+        );
 
         if (!isConfirmed) return;
 
